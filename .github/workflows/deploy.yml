@@ -22,7 +22,9 @@ jobs:
           script: |
             sudo pkill -9 -u studentXX -f 'app.py' || true
             sleep 2
-            sudo -u studentXX git -C /home/studentXX/myapp fetch
-            sudo -u studentXX git -C /home/studentXX/myapp reset --hard origin/main
+            sudo -u studentXX git -C /home/studentXX/myapp fetch && \
+              sudo -u studentXX git -C /home/studentXX/myapp reset --hard origin/main || \
+              (sudo find /home/studentXX/myapp -mindepth 1 -delete && \
+               sudo -u studentXX git clone https://github.com/${{ github.repository }} /home/studentXX/myapp)
             sudo -u studentXX pip3 install -r /home/studentXX/myapp/requirements.txt --break-system-packages
             sudo -u studentXX bash -c 'nohup python3 /home/studentXX/myapp/app.py > /home/studentXX/myapp/app.log 2>&1 & disown'
